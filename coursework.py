@@ -6,6 +6,7 @@ CLEAR = lambda: os.system('cls' if os.name == 'nt' else 'clear')
 GRID_HEIGHT = 8
 GRID_WIDTH = 8
 
+UP = '~'
 WP = 'w'
 WQ = 'W'
 EC = '_'
@@ -24,14 +25,14 @@ def main():
 
 def init_board():
     board=[
-            ['w', '_', 'w', '_', 'w', '_', 'w', '_'],
-            ['_', 'w', '_', 'w', '_', 'w', '_', 'w'],
-            ['w', '_', 'w', '_', 'w', '_', 'w', '_'],
-            ['_', '_', '_', '_', '_', '_', '_', '_'],
-            ['_', '_', '_', '_', '_', '_', '_', '_'],
-            ['_', 'b', '_', 'b', '_', 'b', '_', 'b'],
-            ['b', '_', 'b', '_', 'b', '_', 'b', '_'],
-            ['_', 'b', '_', 'b', '_', 'b', '_', 'b']]
+            ['w', '~', 'w', '~', 'w', '~', 'w', '~'],
+            ['~', 'w', '~', 'w', '~', 'w', '~', 'w'],
+            ['w', '~', 'w', '~', 'w', '~', 'w', '~'],
+            ['~', '_', '~', '_', '~', '_', '~', '_'],
+            ['_', '~', '_', '~', '_', '~', '_', '~'],
+            ['~', 'b', '~', 'b', '~', 'b', '~', 'b'],
+            ['b', '~', 'b', '~', 'b', '~', 'b', '~'],
+            ['~', 'b', '~', 'b', '~', 'b', '~', 'b']]
     return board
 
 def print_board(board):
@@ -58,6 +59,17 @@ def  jump(value_package, board):
         dst_x = dst_x - 1
         dst_y = dst_y - 1
 
+        if src_x < 0 or src_x > 7  or src_y < 0 or src_y > 7:
+            print("Invalid Source Coord, try again")
+            print_board(board)
+            return jump(value_package, board)
+        
+ 
+        if dst_x < 0 or dst_x > 7  or dst_y < 0 or dst_y > 7:
+            print("Destination coord invalid , try again")
+            print_board(board)
+            return jump(value_package, board)       
+
         x_diff = abs(src_x - dst_x)
         y_diff = abs(src_x - dst_y)
 
@@ -70,13 +82,32 @@ def  jump(value_package, board):
             print('Source cell is empty, try again.')
             return jump(value_package, board)
 
+        if board[dst_x][dst_y] == "~":
+            print('Unplayable Cell try again')
+            return jump(value_package, board)
+
+        #cannot move more than 2 in any direcetion
+        if dst_x > src_x + 2 or dst_x < src_x - 2: 
+            print('Move is too long, Try again')
+            return jump(value_package, board)
+
+        if dst_y > src_y + 2 or dst_y < src_y - 2:
+            print ('Move is too long, Try again')
+            return jump(value_package, board)
+        #moves can only be diaginal
+        if dst_x == src_x:
+            print('You can only move diagonally, try again')
+            return jump(value_package, board)
+
+        if  dst_y == src_y:
+            print('You can only move diagonally, try again')
+            return jump(value_package, board)
+
         if board[dst_y][dst_x] != '_':
             print('Target cell is taken, try again.')
             return jump(value_package, board)
-      
-        print(src_x, src_y, mid_x, mid_y, dst_x, dst_y)
 
-
+        #changes board after jumping oppents piece
         if board[mid_y][mid_x] == 'w':
             board[src_y][src_x] = '_'
             board[mid_y][mid_x] = '_'
@@ -84,6 +115,7 @@ def  jump(value_package, board):
             value_package["cur_turn"] = PLAYERS.White
             print_board(board)
             return jump(value_package, board)
+
 
         if board[src_y][src_x] == board[mid_y][mid_x]:
             print('Cannot take your own piece')
@@ -95,10 +127,10 @@ def  jump(value_package, board):
             mid_x = mid_x + 1
             mid_y = mid_y + 1
 
-
-        if board[mid_y][mid_x] == '_':
-            print('No piece to jump over')
-            return jump(value_package, board)
+        #cannot jump and empty cell
+        if board[mid_y][mid_x] == EC:
+             print('No piece to jump over')
+             return jump(value_package, board)
 
         board[dst_y][dst_x] = 'b'
         board[src_y][src_x] = '_'
@@ -117,8 +149,6 @@ def  jump(value_package, board):
         src_y = src_y - 1
         dst_x = dst_x - 1
         dst_y = dst_y - 1
-    
-        print(src_x, src_y, dst_x, dst_y)
 
         x_diff = abs(src_x - dst_x)
         y_diff = abs(src_x - dst_y)
@@ -130,15 +160,47 @@ def  jump(value_package, board):
         if board[src_y][src_x] == '_':
             print('Source cell is empty, try again.')
             return jump(value_package, board)
+        
+        if board[dst_x][dst_y] == "~":
+            print('Unplayable Cell try again')
+            return jump(value_package, board)
+
+        #cannot move more than 2 in any direcetion
+        if dst_x > src_x + 2 or dst_x < src_x - 2 :
+            print('Move is too long, Try again')
+            return jump(value_package, board)
+
+        if dst_y > src_y + 2 or dst_y < src_y - 2 :
+            print ('Move is too long, Try again')
+            return jump(value_package, board)
+        
+        #moves can only be diaginal
+        if dst_x == src_x:
+            print('You can only move diagonally, try again')
+            return jump(value_package, board)
+
+        if  dst_y == src_y:
+            print('You can only move diagonally, try again')
+            return jump(value_package, board)
 
         if board[dst_y][dst_x] != '_':
             print('Target cell is taken, try again.')
             return jump(value_package, board)
        
-
-        if board[mid_y][mid_x] == '_':
-            print('No piece to jump over')
+        #changes board after jumping oppents piece
+        if board[mid_y][mid_x] == 'b':
+            board[src_y][src_x] = '_'
+            board[mid_y][mid_x] = '_'
+            board[dst_y][dst_x] = 'w'
+            value_package["cur_turn"] = PLAYERS.Black
+            print_board(board)
             return jump(value_package, board)
+
+
+        #cannot jump empty cell
+        if board[mid_y][mid_x] == EC:
+             print('No piece to jump over')
+             return jump(value_package, board)
       
         print(mid_x, mid_y)
 
