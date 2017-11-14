@@ -49,14 +49,42 @@ def print_board(board):
 
 
 
-def  jump(value_package, board):
+def jump(value_package, board, White_Pieces, Black_Pieces):
     if value_package["cur_turn"] == PLAYERS.Black:
-        print("Black")
-        src_x = int(input("Choose a x coord to move from "))
-        src_y = int(input("Choose a y coord to move from "))
-        dst_x = int(input("Choose a x coord to move to "))
-        dst_y = int(input("Choose a y coord to move to "))
-    
+        print("Blacks Turn")
+      
+        exit = input("press any key then hit enter to continue or type exit then hit enter to leave ")
+        if exit == "exit":
+            exit()
+      
+        while True:
+            try:
+                src_x = int(input("Choose a x coord to move from "))
+                break
+            except:
+                print("thats not a number")
+              
+        while True:
+            try:
+                src_y = int(input("Choose a y coord to move from "))
+                break
+            except:
+                print("thats not a number")
+              
+        while True:
+            try:
+                dst_x = int(input("Choose a x coord to move to "))
+                break
+            except:
+                print("thats not a number")
+        
+        while True:
+            try:
+                dst_y = int(input("Choose a y coord to move to "))
+                break
+            except:
+                print("thats not a number")
+
         src_x = src_x - 1
         src_y = src_y - 1
         dst_x = dst_x - 1
@@ -97,6 +125,7 @@ def  jump(value_package, board):
         if dst_y > src_y + 2 or dst_y < src_y - 2:
             print ('Move is too long, Try again')
             return jump(value_package, board)
+        
         #moves can only be diaginal
         if dst_x == src_x:
             print('You can only move diagonally, try again')
@@ -109,6 +138,11 @@ def  jump(value_package, board):
         if board[dst_y][dst_x] != EC:
             print('Target cell is taken, try again.')
             return jump(value_package, board)
+       
+        if board[src_y][src_x] == BP:
+            if dst_y > src_y:
+                print("only queens can move backwards")
+                return jump(value_package, board)
 
         #changes board after jumping oppents piece
         if board[mid_y][mid_x] == WP or board[mid_y][mid_x] == WQ:
@@ -144,12 +178,12 @@ def  jump(value_package, board):
            
         mid_x = mid_x -1
         mid_y = mid_y -1
-        print(mid_x, mid_y)
+      
 
         if board[src_y][src_x] == board[mid_y][mid_x]:
             print('Cannot take your own piece')
             return jump(value_package, board)
-        
+      
         if board[src_y][src_x] == BP:
             if dst_y == 0:
                 board[src_y][src_x] = EC
@@ -157,22 +191,48 @@ def  jump(value_package, board):
             else:
                 board[src_y][src_x] = EC
                 board[dst_y][dst_x] = BP
-
-        if board[src_y][src_x] == BQ:
-            board[src_y][src_x] = EC
-            board[dst_y][dst_x] = BQ
+                if board[src_y][src_x] == BQ:
+                    board[src_y][src_x] = EC
+                    board[dst_y][dst_x] = BQ
 
         value_package["cur_turn"] = PLAYERS.White
         print_board(board)
         return jump(value_package, board)
     
     else:
+        print("Whites Turn")
         
-        print("White")
-        src_x = int(input("Choose a x coord to move from "))
-        src_y = int(input("Choose a y coord to move from "))
-        dst_x = int(input("Choose a x coord to move to "))
-        dst_y = int(input("Choose a y coord to move to "))
+        exit = input("press any key then hit enter to continue or type exit then hit enter to leave ")
+        if exit == "exit":
+            exit()
+
+        while True:
+            try:
+                src_x = int(input("Choose a x coord to move from "))
+                break
+            except:
+                print("thats not a number")
+        
+        while True:
+            try:
+                src_y = int(input("Choose a y coord to move from "))
+                break
+            except:
+                print("thats not a number")
+
+        while True:
+            try:
+                dst_x = int(input("Choose a x coord to move to "))
+                break
+            except:
+                print("thats not a number")
+        
+        while True:
+            try:
+                dst_y = int(input("Choose a y coord to move to "))
+                break
+            except:
+                print("thats not a number")
     
         src_x = src_x - 1
         src_y = src_y - 1
@@ -215,7 +275,13 @@ def  jump(value_package, board):
         if board[dst_y][dst_x] != EC:
             print('Target cell is taken, try again.')
             return jump(value_package, board)
-       
+
+        if board[src_y][src_x] == WP:
+            if dst_y < src_y:
+                print("only queens can move backwards")
+                return jump(value_package, board)
+
+
         #changes board after jumping oppents piece
         if board[mid_y][mid_x] == BQ or board[mid_y][mid_x] == BP:
             if board[src_y][src_x] == WP:
@@ -249,7 +315,6 @@ def  jump(value_package, board):
            
         mid_x = mid_x +1
         mid_y = mid_y +1
-        print(mid_x, mid_y)
 
         if board[src_y][src_x] == board[mid_y][mid_x]:
             print('Cannot take your own piece')
