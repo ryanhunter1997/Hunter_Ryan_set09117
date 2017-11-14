@@ -6,6 +6,9 @@ CLEAR = lambda: os.system('cls' if os.name == 'nt' else 'clear')
 GRID_HEIGHT = 8
 GRID_WIDTH = 8
 
+Black_Pieces = 12
+White_Picees = 12
+
 UP = '~'
 WP = 'w'
 WQ = 'W'
@@ -17,7 +20,7 @@ PLAYERS = Enum("Players", "White Black")
 
 def main():
     print("Python Checkers")
-    value_package = dict([("board", init_board()), ("turn_count", 1), ("cur_turn", PLAYERS.Black)])
+    value_package = dict([("board", init_board()), ("cur_turn", PLAYERS.Black)])
     board = init_board()
     while True:
         print_board(board)
@@ -78,11 +81,11 @@ def  jump(value_package, board):
 
     
 
-        if board[src_y][src_x] == '_':
+        if board[src_y][src_x] == EC:
             print('Source cell is empty, try again.')
             return jump(value_package, board)
 
-        if board[dst_x][dst_y] == "~":
+        if board[dst_y][dst_x] == UP:
             print('Unplayable Cell try again')
             return jump(value_package, board)
 
@@ -103,39 +106,65 @@ def  jump(value_package, board):
             print('You can only move diagonally, try again')
             return jump(value_package, board)
 
-        if board[dst_y][dst_x] != '_':
+        if board[dst_y][dst_x] != EC:
             print('Target cell is taken, try again.')
             return jump(value_package, board)
 
         #changes board after jumping oppents piece
-        if board[mid_y][mid_x] == 'w':
-            board[src_y][src_x] = '_'
-            board[mid_y][mid_x] = '_'
-            board[dst_y][dst_x] = 'b'
+        if board[mid_y][mid_x] == WP or board[mid_y][mid_x] == WQ:
+            if board[src_y][src_x] == BP:
+                if dst_y == 0:
+                    White_Pieces = White_Pieces - 1
+                    board[src_y][src_x] = EC
+                    board[mid_y][mid_x] = EC
+                    board[dst_y][dst_x] = BQ
+                else:  
+                    board[src_y][src_x] = EC
+                    board[mid_y][mid_x] = EC
+                    board[dst_y][dst_x] = BP
+                    White_Pieces = White_Pieces - 1
+                print_board(board)
+                if White_Pieces == 0:
+                    print('Black Wins')
+                    exit()
             value_package["cur_turn"] = PLAYERS.White
             print_board(board)
             return jump(value_package, board)
-
-
-        if board[src_y][src_x] == board[mid_y][mid_x]:
-            print('Cannot take your own piece')
-            return jump(value_package, board)
-       
-
+        
 
         if src_x == mid_x + 1:
             mid_x = mid_x + 1
             mid_y = mid_y + 1
 
+        
         #cannot jump and empty cell
         if board[mid_y][mid_x] == EC:
-             print('No piece to jump over')
-             return jump(value_package, board)
+            print('No piece to jump over')
+            return jump(value_package, board)
+           
+        mid_x = mid_x -1
+        mid_y = mid_y -1
+        print(mid_x, mid_y)
 
-        board[dst_y][dst_x] = 'b'
-        board[src_y][src_x] = '_'
+        if board[src_y][src_x] == board[mid_y][mid_x]:
+            print('Cannot take your own piece')
+            return jump(value_package, board)
         
+        if board[src_y][src_x] == BP:
+            if dst_y == 0:
+                board[src_y][src_x] = EC
+                board[dst_y][dst_x] = BQ
+            else:
+                board[src_y][src_x] = EC
+                board[dst_y][dst_x] = BP
+
+        if board[src_y][src_x] == BQ:
+            board[src_y][src_x] = EC
+            board[dst_y][dst_x] = BQ
+
         value_package["cur_turn"] = PLAYERS.White
+        print_board(board)
+        return jump(value_package, board)
     
     else:
         
@@ -157,11 +186,11 @@ def  jump(value_package, board):
         mid_y = (src_y + dst_y) // 2
 
 
-        if board[src_y][src_x] == '_':
+        if board[src_y][src_x] == EC:
             print('Source cell is empty, try again.')
             return jump(value_package, board)
         
-        if board[dst_x][dst_y] == "~":
+        if board[dst_y][dst_x] == UP:
             print('Unplayable Cell try again')
             return jump(value_package, board)
 
@@ -183,39 +212,64 @@ def  jump(value_package, board):
             print('You can only move diagonally, try again')
             return jump(value_package, board)
 
-        if board[dst_y][dst_x] != '_':
+        if board[dst_y][dst_x] != EC:
             print('Target cell is taken, try again.')
             return jump(value_package, board)
        
         #changes board after jumping oppents piece
-        if board[mid_y][mid_x] == 'b':
-            board[src_y][src_x] = '_'
-            board[mid_y][mid_x] = '_'
-            board[dst_y][dst_x] = 'w'
+        if board[mid_y][mid_x] == BQ or board[mid_y][mid_x] == BP:
+            if board[src_y][src_x] == WP:
+                if dst_y ==7:
+                    Black_Pieces = Black_Pieces - 1
+                    board[src_y][src_x] = EC
+                    board[mid_y][mid_x] = EC
+                    board[dst_y][dst_x] = WQ
+                else:  
+                    board[src_y][src_x] = EC
+                    board[mid_y][mid_x] = EC
+                    board[dst_y][dst_x] = WP
+                    Black_Pieces = Black_Pieces
+                print_board(board)
+                if Black_Pieces == 0:
+                    print('White Wins')
+                    exit()
             value_package["cur_turn"] = PLAYERS.Black
             print_board(board)
             return jump(value_package, board)
 
+        if src_x == mid_x - 1:
+            mid_x = mid_x - 1
+            mid_y = mid_y - 1
 
-        #cannot jump empty cell
-        if board[mid_y][mid_x] == EC:
-             print('No piece to jump over')
-             return jump(value_package, board)
-      
-        print(mid_x, mid_y)
-
-        if src_x == mid_x:
-            mid_x = mid_x + 1
-            mid_y = mid_y + 1
         
-        print (mid_x, mid_y)
+        #cannot jump and empty cell
+        if board[mid_y][mid_x] == EC:
+            print('No piece to jump over')
+            return jump(value_package, board)
+           
+        mid_x = mid_x +1
+        mid_y = mid_y +1
+        print(mid_x, mid_y)
 
         if board[src_y][src_x] == board[mid_y][mid_x]:
             print('Cannot take your own piece')
             return jump(value_package, board)
-
-        board[dst_y][dst_x] = 'w'
-        board[src_y][src_x] = '_'
         
+        if board[src_y][src_x] == WP:
+            if dst_y == 7:
+                board[src_y][src_x] = EC
+                board[dst_y][dst_x] = WQ
+            else:
+                board[src_y][src_x] = EC
+                board[dst_y][dst_x] = WP
+
+        if board[src_y][src_x] == WQ:
+            board[src_y][src_x] = EC
+            board[dst_y][dst_x] = WQ
+
         value_package["cur_turn"] = PLAYERS.Black
+        print_board(board)
+        return jump(value_package, board)
+
+        
 main()
