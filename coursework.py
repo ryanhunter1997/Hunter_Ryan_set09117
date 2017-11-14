@@ -7,7 +7,7 @@ GRID_HEIGHT = 8
 GRID_WIDTH = 8
 
 Black_Pieces = 12
-White_Picees = 12
+White_Pieces = 12
 
 UP = '~'
 WP = 'w'
@@ -24,7 +24,7 @@ def main():
     board = init_board()
     while True:
         print_board(board)
-        jump(value_package, board)
+        jump(value_package, board, White_Pieces, Black_Pieces)
 
 def init_board():
     board=[
@@ -56,7 +56,8 @@ def jump(value_package, board, White_Pieces, Black_Pieces):
         exit = input("press any key then hit enter to continue or type exit then hit enter to leave ")
         if exit == "exit":
             exit()
-      
+        
+        #exception handling for user inputs
         while True:
             try:
                 src_x = int(input("Choose a x coord to move from "))
@@ -89,17 +90,18 @@ def jump(value_package, board, White_Pieces, Black_Pieces):
         src_y = src_y - 1
         dst_x = dst_x - 1
         dst_y = dst_y - 1
-
+        
+        #makes sure source coords are within range
         if src_x < 0 or src_x > 7  or src_y < 0 or src_y > 7:
             print("Invalid Source Coord, try again")
             print_board(board)
-            return jump(value_package, board)
+            return jump(value_package, board, White_Pieces, Black_Pieces)
         
- 
+        #makes sure destination coords are within range
         if dst_x < 0 or dst_x > 7  or dst_y < 0 or dst_y > 7:
             print("Destination coord invalid , try again")
             print_board(board)
-            return jump(value_package, board)       
+            return jump(value_package, board, White_Pieces, Black_Pieces)       
 
         x_diff = abs(src_x - dst_x)
         y_diff = abs(src_x - dst_y)
@@ -108,41 +110,44 @@ def jump(value_package, board, White_Pieces, Black_Pieces):
         mid_y = (src_y + dst_y) // 2
 
     
-
+        #source cell must have a piece in it
         if board[src_y][src_x] == EC:
             print('Source cell is empty, try again.')
-            return jump(value_package, board)
-
+            return jump(value_package, board, White_Pieces, Black_Pieces)
+        
+        #cells out of play
         if board[dst_y][dst_x] == UP:
             print('Unplayable Cell try again')
-            return jump(value_package, board)
+            return jump(value_package, board, White_Pieces, Black_Pieces)
 
         #cannot move more than 2 in any direcetion
         if dst_x > src_x + 2 or dst_x < src_x - 2: 
             print('Move is too long, Try again')
-            return jump(value_package, board)
+            return jump(value_package, board, White_Pieces, Black_Pieces)
 
         if dst_y > src_y + 2 or dst_y < src_y - 2:
             print ('Move is too long, Try again')
-            return jump(value_package, board)
+            return jump(value_package, board, White_Pieces, Black_Pieces)
         
         #moves can only be diaginal
         if dst_x == src_x:
             print('You can only move diagonally, try again')
-            return jump(value_package, board)
-
+            return jump(value_package, board, White_Pieces, Black_Pieces)
+        
         if  dst_y == src_y:
             print('You can only move diagonally, try again')
-            return jump(value_package, board)
-
+            return jump(value_package, board, White_Pieces, Black_Pieces)
+        
+        #cell is taken by piece
         if board[dst_y][dst_x] != EC:
             print('Target cell is taken, try again.')
-            return jump(value_package, board)
+            return jump(value_package, board, White_Pieces, Black_Pieces)
        
+        #cannot move backwards unless queen
         if board[src_y][src_x] == BP:
             if dst_y > src_y:
                 print("only queens can move backwards")
-                return jump(value_package, board)
+                return jump(value_package, board, White_Pieces, Black_Pieces)
 
         #changes board after jumping oppents piece
         if board[mid_y][mid_x] == WP or board[mid_y][mid_x] == WQ:
@@ -159,11 +164,11 @@ def jump(value_package, board, White_Pieces, Black_Pieces):
                     White_Pieces = White_Pieces - 1
                 print_board(board)
                 if White_Pieces == 0:
-                    print('Black Wins')
+                    print('Black Wins') #win condition
                     exit()
             value_package["cur_turn"] = PLAYERS.White
             print_board(board)
-            return jump(value_package, board)
+            return jump(value_package, board, White_Pieces, Black_Pieces)
         
 
         if src_x == mid_x + 1:
@@ -174,16 +179,17 @@ def jump(value_package, board, White_Pieces, Black_Pieces):
         #cannot jump and empty cell
         if board[mid_y][mid_x] == EC:
             print('No piece to jump over')
-            return jump(value_package, board)
+            return jump(value_package, board, White_Pieces, Black_Pieces)
            
         mid_x = mid_x -1
         mid_y = mid_y -1
       
-
+        #cant take own piece
         if board[src_y][src_x] == board[mid_y][mid_x]:
             print('Cannot take your own piece')
-            return jump(value_package, board)
-      
+            return jump(value_package, board, White_Pieces, Black_Pieces)
+        
+        #turns pawn into queen and replaces cells with correct output after move
         if board[src_y][src_x] == BP:
             if dst_y == 0:
                 board[src_y][src_x] = EC
@@ -194,10 +200,11 @@ def jump(value_package, board, White_Pieces, Black_Pieces):
                 if board[src_y][src_x] == BQ:
                     board[src_y][src_x] = EC
                     board[dst_y][dst_x] = BQ
-
+        
+        #change whites turn
         value_package["cur_turn"] = PLAYERS.White
         print_board(board)
-        return jump(value_package, board)
+        return jump(value_package, board, White_Pieces, Black_Pieces)
     
     else:
         print("Whites Turn")
@@ -248,38 +255,38 @@ def jump(value_package, board, White_Pieces, Black_Pieces):
 
         if board[src_y][src_x] == EC:
             print('Source cell is empty, try again.')
-            return jump(value_package, board)
+            return jump(value_package, board, White_Pieces, Black_Pieces)
         
         if board[dst_y][dst_x] == UP:
             print('Unplayable Cell try again')
-            return jump(value_package, board)
+            return jump(value_package, board, White_Pieces, Black_Pieces)
 
         #cannot move more than 2 in any direcetion
         if dst_x > src_x + 2 or dst_x < src_x - 2 :
             print('Move is too long, Try again')
-            return jump(value_package, board)
+            return jump(value_package, board, White_Pieces, Black_Pieces)
 
         if dst_y > src_y + 2 or dst_y < src_y - 2 :
             print ('Move is too long, Try again')
-            return jump(value_package, board)
+            return jump(value_package, board, White_Pieces, Black_Pieces)
         
         #moves can only be diaginal
         if dst_x == src_x:
             print('You can only move diagonally, try again')
-            return jump(value_package, board)
+            return jump(value_package, board, White_Pieces, Black_Pieces)
 
         if  dst_y == src_y:
             print('You can only move diagonally, try again')
-            return jump(value_package, board)
+            return jump(value_package, board, White_Pieces, Black_Pieces)
 
         if board[dst_y][dst_x] != EC:
             print('Target cell is taken, try again.')
-            return jump(value_package, board)
+            return jump(value_package, board, White_Pieces, Black_Pieces)
 
         if board[src_y][src_x] == WP:
             if dst_y < src_y:
                 print("only queens can move backwards")
-                return jump(value_package, board)
+                return jump(value_package, board, White_Pieces, Black_Pieces)
 
 
         #changes board after jumping oppents piece
@@ -296,12 +303,12 @@ def jump(value_package, board, White_Pieces, Black_Pieces):
                     board[dst_y][dst_x] = WP
                     Black_Pieces = Black_Pieces
                 print_board(board)
-                if Black_Pieces == 0:
+                if Black_Pieces == 0: #win condition
                     print('White Wins')
                     exit()
             value_package["cur_turn"] = PLAYERS.Black
             print_board(board)
-            return jump(value_package, board)
+            return jump(value_package, board, White_Pieces, Black_Pieces)
 
         if src_x == mid_x - 1:
             mid_x = mid_x - 1
@@ -311,14 +318,14 @@ def jump(value_package, board, White_Pieces, Black_Pieces):
         #cannot jump and empty cell
         if board[mid_y][mid_x] == EC:
             print('No piece to jump over')
-            return jump(value_package, board)
+            return jump(value_package, board, White_Pieces, Black_Pieces)
            
         mid_x = mid_x +1
         mid_y = mid_y +1
 
         if board[src_y][src_x] == board[mid_y][mid_x]:
             print('Cannot take your own piece')
-            return jump(value_package, board)
+            return jump(value_package, board, White_Pieces, Black_Pieces)
         
         if board[src_y][src_x] == WP:
             if dst_y == 7:
@@ -334,7 +341,7 @@ def jump(value_package, board, White_Pieces, Black_Pieces):
 
         value_package["cur_turn"] = PLAYERS.Black
         print_board(board)
-        return jump(value_package, board)
+        return jump(value_package, board, White_Pieces, Black_Pieces)
 
         
 main()
