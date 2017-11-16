@@ -28,12 +28,12 @@ def main():
 
 def init_board():
     board=[
-            ['B', '~', 'w', '~', 'w', '~', 'w', '~'],
-            ['~', 'w', '~', '_', '~', 'w', '~', 'w'],
-            ['w', '~', 'w', '~', 'b', '~', 'w', '~'],
+            ['w', '~', 'w', '~', 'w', '~', 'w', '~'],
+            ['~', 'w', '~', 'w', '~', 'w', '~', 'w'],
+            ['w', '~', 'w', '~', 'w', '~', 'w', '~'],
             ['~', '_', '~', '_', '~', '_', '~', '_'],
-            ['_', '~', 'b', '~', '_', '~', '_', '~'],
-            ['~', '_', '~', 'b', '~', 'b', '~', 'b'],
+            ['_', '~', '_', '~', '_', '~', '_', '~'],
+            ['~', 'b', '~', 'b', '~', 'b', '~', 'b'],
             ['b', '~', 'b', '~', 'b', '~', 'b', '~'],
             ['~', 'b', '~', 'b', '~', 'b', '~', 'b']]
     return board
@@ -209,7 +209,7 @@ def jump(value_package, board, White_Pieces, Black_Pieces):
                         board[asrc_y][asrc_x] = EC
                         board[amid_y][amid_x] = EC
                         board[adst_y][adst_x] = BQ
-                        White_Pieces = White_Pieces - 1
+                        White_Pieces = White_Pieces - 2
                 if board[asrc_y][asrc_x] == BQ:
                     amid_x = asrc_x - 1
                     amid_y = asrc_y - 1
