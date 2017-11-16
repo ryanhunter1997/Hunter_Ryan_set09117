@@ -28,12 +28,12 @@ def main():
 
 def init_board():
     board=[
-            ['w', '~', 'w', '~', 'w', '~', 'w', '~'],
-            ['~', 'w', '~', 'w', '~', 'w', '~', 'w'],
-            ['w', '~', 'w', '~', 'w', '~', 'w', '~'],
+            ['B', '~', 'w', '~', 'w', '~', 'w', '~'],
+            ['~', 'w', '~', '_', '~', 'w', '~', 'w'],
+            ['w', '~', 'w', '~', 'b', '~', 'w', '~'],
             ['~', '_', '~', '_', '~', '_', '~', '_'],
-            ['_', '~', '_', '~', '_', '~', '_', '~'],
-            ['~', 'b', '~', 'b', '~', 'b', '~', 'b'],
+            ['_', '~', 'b', '~', '_', '~', '_', '~'],
+            ['~', '_', '~', 'b', '~', 'b', '~', 'b'],
             ['b', '~', 'b', '~', 'b', '~', 'b', '~'],
             ['~', 'b', '~', 'b', '~', 'b', '~', 'b']]
     return board
@@ -143,7 +143,7 @@ def jump(value_package, board, White_Pieces, Black_Pieces):
             print('Target cell is taken, try again.')
             return jump(value_package, board, White_Pieces, Black_Pieces)
        
-        #cannot move backwards unless queen
+        #cannot move backwards
         if board[src_y][src_x] == BP:
             if dst_y > src_y:
                 print("only queens can move backwards")
@@ -162,10 +162,87 @@ def jump(value_package, board, White_Pieces, Black_Pieces):
                     board[mid_y][mid_x] = EC
                     board[dst_y][dst_x] = BP
                     White_Pieces = White_Pieces - 1
-                print_board(board)
-                if White_Pieces == 0:
-                    print('Black Wins') #win condition
-                    exit()
+            elif board[src_y][src_x] == BQ:
+                board[src_y][src_x] = EC
+                board[mid_y][mid_x] = EC
+                board[dst_y][dst_x] = BQ
+                White_Pieces = White_Pieces -1
+            print_board(board)
+            if White_Pieces == 0:
+                print('Black Wins') #win condition
+                exit()    
+            #pawn auto taking next piece
+            asrc_x = dst_x
+            asrc_y = dst_y
+            if board[asrc_y][asrc_x] == BP:
+                amid_x = asrc_x + 1
+                amid_y = asrc_y - 1
+                if board[amid_y][amid_x] == WP or board[amid_y][amid_x] == WQ:
+                    adst_x = amid_x + 1
+                    adst_y = amid_y - 1
+                    if board[adst_y][adst_x] == EC:
+                        board[asrc_y][asrc_x] = EC
+                        board[amid_y][amid_x] = EC
+                        board[adst_y][adst_x] = BP
+                        White_Pieces = White_Pieces - 1
+                if board[asrc_y][asrc_x] == BP:
+                    amid_x = asrc_x - 1
+                    amid_y = asrc_y - 1
+                    if board[amid_y][amid_x] == WP or board[amid_y][amid_x] == WQ:
+                        adst_x = amid_x - 1
+                        adst_y = amid_y - 1
+                        if board[adst_y][adst_x] == EC:
+                            board[asrc_y][asrc_x] = EC
+                            board[amid_y][amid_x] = EC
+                            board[adst_y][adst_x] = BP
+                            White_Pieces = White_Pieces - 1
+            #king auto taking next piece
+            asrc_x = dst_x
+            asrc_y = dst_y
+            if board[asrc_y][asrc_x] == BQ:
+                amid_x = asrc_x + 1
+                amid_y = asrc_y - 1
+                if board[amid_y][amid_x] == WP or board[amid_y][amid_x] == WQ:
+                    adst_x = amid_x + 1
+                    adst_y = amid_y - 1
+                    if board[adst_y][adst_x] == EC:
+                        board[asrc_y][asrc_x] = EC
+                        board[amid_y][amid_x] = EC
+                        board[adst_y][adst_x] = BQ
+                        White_Pieces = White_Pieces - 1
+                if board[asrc_y][asrc_x] == BQ:
+                    amid_x = asrc_x - 1
+                    amid_y = asrc_y - 1
+                    if board[amid_y][amid_x] == WP or board[amid_y][amid_x] == WQ:
+                        adst_x = amid_x - 1
+                        adst_y = amid_y - 1
+                        if board[adst_y][adst_x] == EC:
+                            board[asrc_y][asrc_x] = EC
+                            board[amid_y][amid_x] = EC
+                            board[adst_y][adst_x] = BQ
+                            White_Pieces = White_Pieces - 1
+                if board[asrc_y][asrc_x] == BQ:
+                    amid_x = asrc_x + 1
+                    amid_y = asrc_y + 1
+                if board[amid_y][amid_x] == WP or board[amid_y][amid_x] == WQ:
+                    adst_x = amid_x + 1
+                    adst_y = amid_y + 1
+                    if board[adst_y][adst_x] == EC:
+                        board[asrc_y][asrc_x] = EC
+                        board[amid_y][amid_x] = EC
+                        board[adst_y][adst_x] = BQ
+                        White_Pieces = White_Pieces - 1
+                if board[asrc_y][asrc_x] == BQ:
+                    amid_x = asrc_x - 1
+                    amid_y = asrc_y + 1
+                    if board[amid_y][amid_x] == WP or board[amid_y][amid_x] == WQ:
+                        adst_x = amid_x - 1
+                        adst_y = amid_y + 1
+                        if board[adst_y][adst_x] == EC:
+                            board[asrc_y][asrc_x] = EC
+                            board[amid_y][amid_x] = EC
+                            board[adst_y][adst_x] = BQ
+                            White_Pieces = White_Pieces - 1
             value_package["cur_turn"] = PLAYERS.White
             print_board(board)
             return jump(value_package, board, White_Pieces, Black_Pieces)
@@ -175,7 +252,8 @@ def jump(value_package, board, White_Pieces, Black_Pieces):
             mid_x = mid_x + 1
             mid_y = mid_y + 1
 
-        
+
+
         #cannot jump and empty cell
         if board[mid_y][mid_x] == EC:
             print('No piece to jump over')
@@ -188,8 +266,16 @@ def jump(value_package, board, White_Pieces, Black_Pieces):
         if board[src_y][src_x] == board[mid_y][mid_x]:
             print('Cannot take your own piece')
             return jump(value_package, board, White_Pieces, Black_Pieces)
+       
+        #movement for queen 
+        if board[src_y][src_x] == BQ:
+            if dst_y < src_y or dst_y > src_y:
+                board[dst_y][dst_x] = BQ
+                board[src_y][src_x] = EC
+                print_board(board)
         
-        #turns pawn into queen and replaces cells with correct output after move
+       
+       #turns pawn into queen and replaces cells with correct output after move
         if board[src_y][src_x] == BP:
             if dst_y == 0:
                 board[src_y][src_x] = EC
@@ -200,6 +286,16 @@ def jump(value_package, board, White_Pieces, Black_Pieces):
                 if board[src_y][src_x] == BQ:
                     board[src_y][src_x] = EC
                     board[dst_y][dst_x] = BQ
+        
+        
+        #queen taking other pieces  
+        if board[src_y][src_x] == BQ:
+            if board[mid_y][mid_x] == WP or board[mid_y][mid_x] == WQ:
+                if dst_y < src_y or dst_y > src_y:
+                    board[mid_y][mid_x] = EC
+                    board[src_y][src_x] = EC
+                    board[dst_y][dst_x] = BQ
+                    print_board(board)
         
         #change whites turn
         value_package["cur_turn"] = PLAYERS.White
@@ -301,11 +397,87 @@ def jump(value_package, board, White_Pieces, Black_Pieces):
                     board[src_y][src_x] = EC
                     board[mid_y][mid_x] = EC
                     board[dst_y][dst_x] = WP
-                    Black_Pieces = Black_Pieces
+            elif board[src_y][src_x] == WQ:
+                board[src_y][src_x] = EC
+                board[mid_y][mid_x] = EC
+                board[dst_y][dst_x] = WQ
+                Black_Pieces = Black_Pieces - 1
                 print_board(board)
                 if Black_Pieces == 0: #win condition
                     print('White Wins')
                     exit()
+            #pawn auto taking next piece
+            asrc_x = dst_x
+            asrc_y = dst_y
+            if board[asrc_y][asrc_x] == WP:
+                amid_x = asrc_x - 1
+                amid_y = asrc_y + 1
+                if board[amid_y][amid_x] == BP or board[amid_y][amid_x] == BQ:
+                    adst_x = amid_x - 1
+                    adst_y = amid_y + 1
+                    if board[adst_y][adst_x] == EC:
+                        board[asrc_y][asrc_x] = EC
+                        board[amid_y][amid_x] = EC
+                        board[adst_y][adst_x] = WP
+                        White_Pieces = White_Pieces - 1
+                if board[asrc_y][asrc_x] == WP:
+                    amid_x = asrc_x + 1
+                    amid_y = asrc_y + 1
+                    if board[amid_y][amid_x] == BP or board[amid_y][amid_x] == BQ:
+                        adst_x = amid_x + 1
+                        adst_y = amid_y + 1
+                        if board[adst_y][adst_x] == EC:
+                            board[asrc_y][asrc_x] = EC
+                            board[amid_y][amid_x] = EC
+                            board[adst_y][adst_x] = WP
+                            White_Pieces = White_Pieces - 1
+            #king auto taking next piece
+            asrc_x = dst_x
+            asrc_y = dst_y
+            if board[asrc_y][asrc_x] == WQ:
+                amid_x = asrc_x + 1
+                amid_y = asrc_y - 1
+                if board[amid_y][amid_x] == BP or board[amid_y][amid_x] == BQ:
+                    adst_x = amid_x + 1
+                    adst_y = amid_y - 1
+                    if board[adst_y][adst_x] == EC:
+                        board[asrc_y][asrc_x] = EC
+                        board[amid_y][amid_x] = EC
+                        board[adst_y][adst_x] = WQ
+                        White_Pieces = White_Pieces - 1
+                if board[asrc_y][asrc_x] == WQ:
+                    amid_x = asrc_x - 1
+                    amid_y = asrc_y - 1
+                    if board[amid_y][amid_x] == BP or board[amid_y][amid_x] == BQ:
+                        adst_x = amid_x - 1
+                        adst_y = amid_y - 1
+                        if board[adst_y][adst_x] == EC:
+                            board[asrc_y][asrc_x] = EC
+                            board[amid_y][amid_x] = EC
+                            board[adst_y][adst_x] = WQ
+                            White_Pieces = White_Pieces - 1
+                if board[asrc_y][asrc_x] == WQ:
+                    amid_x = asrc_x + 1
+                    amid_y = asrc_y + 1
+                if board[amid_y][amid_x] == BP or board[amid_y][amid_x] == BQ:
+                    adst_x = amid_x + 1
+                    adst_y = amid_y + 1
+                    if board[adst_y][adst_x] == EC:
+                        board[asrc_y][asrc_x] = EC
+                        board[amid_y][amid_x] = EC
+                        board[adst_y][adst_x] = WQ
+                        White_Pieces = White_Pieces - 1
+                if board[asrc_y][asrc_x] == WQ:
+                    amid_x = asrc_x - 1
+                    amid_y = asrc_y + 1
+                    if board[amid_y][amid_x] == BP or board[amid_y][amid_x] == BQ:
+                        adst_x = amid_x - 1
+                        adst_y = amid_y + 1
+                        if board[adst_y][adst_x] == EC:
+                            board[asrc_y][asrc_x] = EC
+                            board[amid_y][amid_x] = EC
+                            board[adst_y][adst_x] = WQ
+                            White_Pieces = White_Pieces - 1
             value_package["cur_turn"] = PLAYERS.Black
             print_board(board)
             return jump(value_package, board, White_Pieces, Black_Pieces)
@@ -326,6 +498,13 @@ def jump(value_package, board, White_Pieces, Black_Pieces):
         if board[src_y][src_x] == board[mid_y][mid_x]:
             print('Cannot take your own piece')
             return jump(value_package, board, White_Pieces, Black_Pieces)
+       
+        #movement for queen 
+        if board[src_y][src_x] == WQ:
+            if dst_y < src_y or dst_y > src_y:
+                board[dst_y][dst_x] = WQ
+                board[src_y][src_x] = EC
+                print_board(board)
         
         if board[src_y][src_x] == WP:
             if dst_y == 7:
